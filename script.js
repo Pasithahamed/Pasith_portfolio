@@ -322,13 +322,52 @@ const aiDialogues = [
     "Tour complete. Thank you for visiting! I have successfully established a secure connection terminal. Pasith is ready to collaborate—feel free to initiate contact."
 ];
 
-// Initialize speech synthesis voice
+// Initialize speech synthesis voice - optimized to guarantee a female voice on both desktop and mobile (especially Android Google TTS and iOS Safari)
 let assistantVoice = null;
-window.speechSynthesis.onvoiceschanged = () => {
+
+function selectFemaleVoice() {
+    if (!('speechSynthesis' in window)) return;
     const voices = window.speechSynthesis.getVoices();
-    // Try to find a female-sounding voice (e.g., Google UK English Female, Microsoft Zira, etc.)
-    assistantVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Victoria')) || voices[0];
-};
+    if (voices.length === 0) return;
+
+    // Filter English voices since the portfolio text is in English
+    const engVoices = voices.filter(v => v.lang.toLowerCase().startsWith('en'));
+    const candidateVoices = engVoices.length > 0 ? engVoices : voices;
+    
+    // List of keywords and language codes indicating male voices to exclude
+    const maleKeywords = ['male', 'david', 'george', 'ravi', 'daniel', 'alex', 'iom', 'rgc', 'gdm', 'chf', 'rjd', 'wjd', 'jit', 'mim', 'nhg', 'kgh'];
+    
+    // Explicit female voice indicators (names and Google TTS locale codes)
+    const femaleKeywords = ['female', 'zira', 'samantha', 'victoria', 'karen', 'tessa', 'moira', 'fiona', 'hazel', 'sfg', 'tpf', 'fis', 'rfs', 'ahp', 'cne', 'ene', 'gfm', 'susan'];
+
+    // 1. First priority: Find a candidate voice that matches a female keyword and is NOT male
+    let chosenVoice = candidateVoices.find(v => {
+        const name = v.name.toLowerCase();
+        return femaleKeywords.some(keyword => name.includes(keyword)) && 
+               !maleKeywords.some(keyword => name.includes(keyword));
+    });
+
+    // 2. Second priority: Find any candidate voice that is NOT male
+    if (!chosenVoice) {
+        chosenVoice = candidateVoices.find(v => {
+            const name = v.name.toLowerCase();
+            return !maleKeywords.some(keyword => name.includes(keyword));
+        });
+    }
+
+    // 3. Fallback: Any English voice, then the absolute first voice
+    if (!chosenVoice) {
+        chosenVoice = engVoices[0] || voices[0];
+    }
+
+    assistantVoice = chosenVoice;
+}
+
+// Run immediately and handle lazy voice loading on mobile Chrome/Safari
+selectFemaleVoice();
+if ('speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = selectFemaleVoice;
+}
 
 function typeAI(text, callback, delay = 2000) {
     aiSpeech.innerHTML = '';
@@ -336,6 +375,10 @@ function typeAI(text, callback, delay = 2000) {
     // Speak the text
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel(); // Stop any current speech
+        
+        // Always select the best female voice right before speaking to prevent lazy loading issues
+        selectFemaleVoice();
+        
         const utterance = new SpeechSynthesisUtterance(text);
         if (assistantVoice) utterance.voice = assistantVoice;
         utterance.pitch = 1.1; // Slightly higher pitch for AI feel
