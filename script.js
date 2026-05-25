@@ -2,6 +2,9 @@
 //   Three.js Portal & Tunnel Journey
 // ==========================================================================
 
+// Device detection for performance tuning
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
 const canvas = document.querySelector('#bg-canvas');
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x000000, 0.015);
@@ -11,19 +14,22 @@ camera.position.z = 10;
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, powerPreference: "high-performance" });
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 2));
 renderer.toneMapping = THREE.ReinhardToneMapping;
 
-// Post-Processing
-const renderScene = new THREE.RenderPass(scene, camera);
-const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-bloomPass.threshold = 0.2;
-bloomPass.strength = 1.8; // High glow for the portals
-bloomPass.radius = 0.8;
+// Post-Processing - Disable on mobile to improve reliability and frame rates
+let composer = null;
+if (!isMobile) {
+    const renderScene = new THREE.RenderPass(scene, camera);
+    const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = 0.2;
+    bloomPass.strength = 1.8; // High glow for the portals
+    bloomPass.radius = 0.8;
 
-const composer = new THREE.EffectComposer(renderer);
-composer.addPass(renderScene);
-composer.addPass(bloomPass);
+    composer = new THREE.EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
+}
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
@@ -33,9 +39,9 @@ scene.add(ambientLight);
 //   Create Data Tunnel & Portals (Hurdles)
 // ==========================================================================
 
-// 1. Particle Tunnel (Speed lines)
+// 1. Particle Tunnel (Speed lines) - Lower particle count on mobile
 const tunnelGeo = new THREE.BufferGeometry();
-const tunnelCount = 1000;
+const tunnelCount = isMobile ? 300 : 1000;
 const tunnelPos = new Float32Array(tunnelCount * 3);
 
 for(let i=0; i<tunnelCount*3; i+=3) {
@@ -136,15 +142,28 @@ function animate() {
     }
     tunnelMesh.geometry.attributes.position.needsUpdate = true;
 
-    composer.render();
-}
-animate();
+    updateActiveScene();
 
+    if (composer && !isMobile) {
+        composer.render();
+    } else {
+        renderer.render(scene, camera);
+    }
+}
+
+// Resize handling: throttle to avoid layout/GPU thrashing on mobile browser address bar scroll toggles
+let lastWidth = window.innerWidth;
 window.addEventListener('resize', () => {
+    // Only resize if the width changed (address bar show/hide on mobile changes height but not width)
+    if (isMobile && window.innerWidth === lastWidth) return;
+    lastWidth = window.innerWidth;
+
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
+    if (composer) {
+        composer.setSize(window.innerWidth, window.innerHeight);
+    }
 });
 
 // ==========================================================================
@@ -171,8 +190,9 @@ gsap.to(camera.position, {
 
 // 2. UI Scene Crossfading logic
 const scenes = document.querySelectorAll('.scene');
+let lastActiveIndex = -1;
 
-// Function to update active scene based on camera Z position
+// Function to update active scene based on camera Z position (run on every animation frame for perfect synchronization)
 function updateActiveScene() {
     const camZ = camera.position.z;
     
@@ -187,23 +207,18 @@ function updateActiveScene() {
     else if (camZ <= -125 && camZ > -175) activeIndex = 3;
     else if (camZ <= -175) activeIndex = 4;
 
-    scenes.forEach((scene, index) => {
-        if (index === activeIndex) {
-            scene.classList.add('active-scene');
-            triggerSceneSpecificLogic(index);
-        } else {
-            scene.classList.remove('active-scene');
-        }
-    });
+    if (activeIndex !== lastActiveIndex) {
+        lastActiveIndex = activeIndex;
+        scenes.forEach((scene, index) => {
+            if (index === activeIndex) {
+                scene.classList.add('active-scene');
+                triggerSceneSpecificLogic(index);
+            } else {
+                scene.classList.remove('active-scene');
+            }
+        });
+    }
 }
-
-// Hook into ScrollTrigger onUpdate to check position
-ScrollTrigger.create({
-    trigger: "#scroll-container",
-    start: "top top",
-    end: "bottom bottom",
-    onUpdate: updateActiveScene
-});
 
 // 3. Scene-Specific Logic (Typing and SVG)
 let typed = false;
@@ -397,3 +412,6 @@ document.getElementById('start-tour-btn').addEventListener('click', () => {
     // Initialize first stop
     goToNextStop();
 });
+
+// Start the animation loop after all variables and functions are initialized
+animate();

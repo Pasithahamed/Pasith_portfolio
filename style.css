@@ -424,29 +424,258 @@ h1, h2, h3 { font-family: 'Outfit', sans-serif; }
 .contact-details a { color: var(--accent-cyan); text-decoration: none; }
 .contact-details a:hover { text-shadow: 0 0 8px var(--accent-cyan); }
 
-/* Footer */
-.site-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px 0;
-    text-align: center;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    z-index: 50;
-    pointer-events: auto;
-}
-.site-footer p {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-    font-family: 'Fira Code', monospace;
-}
-.site-footer a {
-    color: var(--accent-purple);
-    text-decoration: none;
-    transition: color 0.3s;
-}
-.site-footer a:hover {
-    color: var(--accent-cyan);
-    text-shadow: 0 0 5px var(--accent-cyan);
+
+/* ==========================================================================
+   Mobile Responsive Adjustments (max-width: 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+    /* Navbar compact spacing */
+    .navbar {
+        padding: 0.85rem 1rem;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.95);
+    }
+    .logo {
+        font-size: 0.95rem;
+        letter-spacing: 1px;
+    }
+    .nav-status {
+        font-size: 0.65rem;
+    }
+
+    /* Fixed top alignment to prevent center-clipping of tall elements on mobile */
+    .scene {
+        padding: 4.5rem 0.85rem 2.5rem 0.85rem;
+        justify-content: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Hero Typography */
+    .hero-title {
+        font-size: 2.1rem;
+        animation: float3DMobile 6s ease-in-out infinite;
+        text-shadow: 
+            1px 1px 0 #222,
+            2px 2px 0 var(--accent-cyan),
+            3px 3px 6px rgba(0, 240, 255, 0.4);
+    }
+    
+    @keyframes float3DMobile {
+        0% { transform: translateY(0px) rotateX(5deg) rotateY(-2deg); }
+        50% { transform: translateY(-8px) rotateX(-2deg) rotateY(5deg); text-shadow: 1px 1px 0 #222, 2px 2px 0 var(--accent-purple), 3px 3px 10px rgba(138, 43, 226, 0.6); }
+        100% { transform: translateY(0px) rotateX(5deg) rotateY(-2deg); }
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 0.85rem;
+    }
+    .hero-desc {
+        font-size: 0.8rem;
+        line-height: 1.35;
+    }
+    .sys-badge {
+        margin-bottom: 0.85rem;
+        padding: 3px 8px;
+        font-size: 0.58rem;
+    }
+    
+    /* General Panels */
+    .glass-panel {
+        padding: 1.25rem 1rem;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .scene-title {
+        font-size: 1.45rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+    
+    /* Buttons */
+    .btn {
+        padding: 0.7rem 1.15rem;
+        font-size: 0.85rem;
+    }
+    .3d-btn {
+        animation: floatBtn3DMobile 4s ease-in-out infinite;
+    }
+    @keyframes floatBtn3DMobile {
+        0% { transform: translateY(0px) rotateX(3deg); }
+        50% { transform: translateY(-5px) rotateX(-3deg); }
+        100% { transform: translateY(0px) rotateX(3deg); }
+    }
+
+    /* Page 2: Terminal Window */
+    .terminal-window {
+        width: 100%;
+        max-width: 100%;
+    }
+    .terminal-body {
+        padding: 0.85rem;
+        font-size: 0.7rem;
+        line-height: 1.35;
+        min-height: auto;
+    }
+
+    /* Page 3: Horizontal Timeline Scroll (Fits perfectly on screen without vertical overflow) */
+    .holographic-timeline {
+        padding-left: 0;
+        margin-left: 0;
+        border-left: none;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.75rem;
+        width: 100%;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 0.75rem;
+    }
+    .holographic-timeline::-webkit-scrollbar {
+        height: 4px;
+    }
+    .holographic-timeline::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+    }
+    .holographic-timeline::-webkit-scrollbar-thumb {
+        background: var(--accent-cyan);
+        border-radius: 2px;
+        box-shadow: 0 0 6px var(--accent-cyan);
+    }
+    .holo-card {
+        flex: 0 0 88%;
+        scroll-snap-align: start;
+        padding: 1rem 0.85rem;
+        margin-top: 0 !important;
+        background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), rgba(0, 0, 0, 0.65));
+    }
+    .holo-card::before {
+        display: none;
+    }
+    .holo-header {
+        font-size: 1rem;
+    }
+    .holo-role {
+        font-size: 0.78rem;
+    }
+    .holo-date {
+        margin-bottom: 0.4rem;
+        font-size: 0.7rem;
+    }
+    .holo-card p {
+        font-size: 0.72rem;
+        line-height: 1.3;
+        margin-bottom: 0.25rem;
+    }
+
+    /* Page 4: Skills & Education Grid */
+    .data-grid {
+        gap: 0.5rem;
+        justify-content: space-around;
+        width: 100%;
+    }
+    .skill-ring-container {
+        flex: 1 1 28%;
+        min-width: 70px;
+        text-align: center;
+    }
+    .progress-ring {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 0.35rem;
+    }
+    .ring-label {
+        font-size: 0.65rem;
+        line-height: 1.15;
+    }
+    
+    /* Skills Education Card */
+    .scene#scene-skills .glass-panel.w-100 {
+        margin-top: 0.75rem !important;
+        padding: 1rem 0.85rem;
+    }
+    .scene#scene-skills h3 {
+        font-size: 0.92rem;
+        margin-bottom: 0.2rem;
+    }
+    .scene#scene-skills p {
+        font-size: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+    .cert-tags {
+        gap: 5px;
+        margin-top: 0.6rem;
+    }
+    .tag {
+        padding: 2px 6px;
+        font-size: 0.65rem;
+    }
+
+    /* Contact Radar Scan */
+    .radar-scan {
+        width: 70px;
+        height: 70px;
+        margin: 0.85rem auto;
+    }
+    .contact-details p {
+        font-size: 0.82rem;
+        margin-bottom: 0.45rem;
+    }
+
+    /* AI Assistant Sliding Bottom Sheet */
+    .ai-widget {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(8, 8, 12, 0.96);
+        border-top: 2px solid var(--accent-cyan);
+        border-radius: 16px 16px 0 0;
+        box-shadow: 0 -8px 25px rgba(0, 240, 255, 0.2);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        transform: translateY(0);
+        margin: 0;
+        z-index: 1100;
+    }
+    .ai-widget.hidden {
+        transform: translateY(100%);
+        opacity: 0;
+        pointer-events: none;
+    }
+    .ai-avatar {
+        width: 55px;
+        height: 55px;
+        flex-shrink: 0;
+        border-width: 1.5px;
+    }
+    .ai-dialogue {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: none;
+        flex: 1;
+    }
+    .ai-dialogue::after {
+        display: none;
+    }
+    .ai-name {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+    }
+    .ai-text {
+        font-size: 0.8rem;
+        line-height: 1.35;
+    }
 }
