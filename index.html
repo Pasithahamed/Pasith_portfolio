@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasith Ahamed J | IT & Network Support</title>
+    <meta name="description" content="Portfolio of Pasith Ahamed J, an IT Support and Network Support professional.">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700;900&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Three.js Core -->
+    <script src="https://unpkg.com/three@0.134.0/build/three.min.js"></script>
+    <!-- Three.js Post-Processing -->
+    <script src="https://unpkg.com/three@0.134.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://unpkg.com/three@0.134.0/examples/js/shaders/CopyShader.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+    <!-- Fixed 3D Canvas -->
+    <div class="canvas-container">
+        <canvas id="bg-canvas"></canvas>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">Pasith Ahamed J</div>
+        <div class="nav-status">System: <span class="status-indicator">ONLINE</span></div>
+    </nav>
+
+    <!-- Fixed UI Overlay for Crossfading Scenes -->
+    <div id="ui-layer">
+
+        <!-- AI Assistant Widget -->
+        <div id="ai-assistant" class="ai-widget hidden">
+            <div class="ai-avatar">
+                <img src="file:///C:/Users/acer/.gemini/antigravity/brain/ef61c2ee-9cab-41bd-be0d-634443df051b/nova_ai_avatar_1779540309989.png" alt="JUMAPAPAS AI Assistant">
+                <div class="ai-status-ring"></div>
+            </div>
+            <div class="ai-dialogue">
+                <div class="ai-name">JUMAPAPAS <span class="sys-tag">PASITH.AI</span></div>
+                <div class="ai-text" id="ai-speech">Initializing protocols...</div>
+            </div>
+        </div>
+        
+        <!-- Scene 1: Hero Boot Sequence -->
+        <section class="scene active-scene" id="scene-hero">
+            <div class="glass-panel text-center">
+                <div class="sys-badge">INITIALIZATION COMPLETE</div>
+                <h1 class="hero-title">Pasith Ahamed J</h1>
+                <h2 class="hero-subtitle">IT & Network Support Architect</h2>
+                <p class="hero-desc">Bridging physical hardware and secure digital infrastructure.</p>
+                
+                <button id="start-tour-btn" class="btn primary-btn mt-4 3d-btn">
+                    <span class="icon">🤖</span> Initialize AI Guided Tour
+                </button>
+            </div>
+        </section>
+
+        <!-- Scene 2: Interactive Terminal (About) -->
+        <section class="scene" id="scene-about">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                    <span class="title">pasith@data-tunnel: ~/about</span>
+                </div>
+                <div class="terminal-body" id="typing-terminal">
+                    <!-- Typing effect injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Scene 3: Experience Execution Logs -->
+        <section class="scene" id="scene-experience">
+            <h2 class="scene-title">Execution Logs <span class="highlight">//</span> Experience</h2>
+            <div class="holographic-timeline">
+                <div class="holo-card">
+                    <div class="holo-header">Integra Software Services</div>
+                    <div class="holo-role">Technical Editor</div>
+                    <div class="holo-date">Feb 2025 – Present</div>
+                    <p>> Editing and refining technical documents for accuracy and clarity.</p>
+                    <p>> Developing reusable templates to improve workflow efficiency.</p>
+                </div>
+                <div class="holo-card mt-4">
+                    <div class="holo-header">Integra Software Services</div>
+                    <div class="holo-role">IT Support Intern</div>
+                    <div class="holo-date">Jan 2023 – Feb 2023</div>
+                    <p>> Provided end-user IT support for hardware & software.</p>
+                    <p>> Troubleshot system/network connectivity problems.</p>
+                    <p>> Maintained IT ticketing system tracking.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scene 4: Data Visualization (Skills & Edu) -->
+        <section class="scene" id="scene-skills">
+            <h2 class="scene-title">System Modules <span class="highlight">//</span> Capabilities</h2>
+            <div class="data-grid">
+                <!-- Skill Ring 1 -->
+                <div class="skill-ring-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle bg" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                        <circle class="progress-ring__circle progress cyan" stroke="#00f0ff" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" data-percent="90"/>
+                    </svg>
+                    <div class="ring-label">Networking &<br>Support</div>
+                </div>
+                <!-- Skill Ring 2 -->
+                <div class="skill-ring-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle bg" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                        <circle class="progress-ring__circle progress purple" stroke="#8a2be2" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" data-percent="85"/>
+                    </svg>
+                    <div class="ring-label">Hardware &<br>OS Config</div>
+                </div>
+                <!-- Skill Ring 3 -->
+                <div class="skill-ring-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle bg" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                        <circle class="progress-ring__circle progress white" stroke="#ffffff" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" data-percent="75"/>
+                    </svg>
+                    <div class="ring-label">Cyber<br>Security</div>
+                </div>
+            </div>
+            
+            <div class="glass-panel mt-4 w-100">
+                <h3>B.E. Computer Science Engineering</h3>
+                <p>IFET College of Engineering | GPA: 7.9/10 | 2019 - 2023</p>
+                <div class="cert-tags">
+                    <span class="tag">Cisco Packet Tracer</span>
+                    <span class="tag">Python Essentials</span>
+                    <span class="tag">Java J2EE</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scene 5: Contact Connection -->
+        <section class="scene" id="scene-contact">
+            <div class="glass-panel contact-panel text-center">
+                <h2 class="scene-title">Establish Secure Connection</h2>
+                <div class="radar-scan">
+                    <div class="radar-dot"></div>
+                </div>
+                <div class="contact-details">
+                    <p><strong>Uplink:</strong> <a href="mailto:pasithahamed13@gmail.com">pasithahamed13@gmail.com</a></p>
+                    <p><strong>Frequency:</strong> <a href="tel:+918072141456">+91 8072141456</a></p>
+                    <p><strong>Coordinates:</strong> Puducherry, India</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Scroll Container for GSAP scrub physics (creates the scrollbar) -->
+    <main id="scroll-container" style="height: 500vh; position: relative; z-index: 1;">
+    </main>
+
+    <!-- Custom JS -->
+    <script src="script.js"></script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; Product from <a href="https://pws.unaux.com/" target="_blank">PWS</a></p>
+    </footer>
+</body>
+</html>

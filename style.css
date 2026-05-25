@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Realistic 3D Refactor Styles
+   ========================================================================== */
+:root {
+    --bg-dark: #000000;
+    --text-primary: #f0f0f0;
+    --accent-cyan: #00f0ff;
+    --accent-purple: #8a2be2;
+    --terminal-green: #00ff41;
+    --glass-bg: rgba(10, 10, 15, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    /* We handle scroll via GSAP, so body can scroll normally */
+}
+
+h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+.text-center { text-align: center; }
+.highlight { color: var(--accent-cyan); text-shadow: 0 0 15px var(--accent-cyan); }
+.mt-4 { margin-top: 2rem; }
+.w-100 { width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+
+/* 3D Canvas Fixed Background */
+.canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1.5rem 5%;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+}
+.logo { 
+    font-size: 1.2rem; 
+    font-weight: 900; 
+    letter-spacing: 2px; 
+    transform-style: preserve-3d;
+    perspective: 500px;
+    animation: floatLogo 5s infinite ease-in-out;
+    text-shadow: 1px 1px 0 var(--accent-cyan), 2px 2px 5px rgba(0, 240, 255, 0.4);
+}
+
+@keyframes floatLogo {
+    0% { transform: rotateX(5deg) rotateY(-5deg); }
+    50% { transform: rotateX(-5deg) rotateY(5deg); text-shadow: 1px 1px 0 var(--accent-purple), 2px 2px 5px rgba(138, 43, 226, 0.4); }
+    100% { transform: rotateX(5deg) rotateY(-5deg); }
+}
+
+.nav-status { font-family: 'Fira Code', monospace; font-size: 0.8rem; color: #888; }
+.status-indicator { color: var(--terminal-green); text-shadow: 0 0 8px var(--terminal-green); }
+
+/* Scroll Container & Fixed UI Layer */
+#scroll-container {
+    /* Height is set inline to drive the scrollbar */
+}
+
+#ui-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none; /* Let clicks pass through if not active */
+}
+
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 5rem 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.scene.active-scene {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto; /* Enable clicks only on the active scene */
+}
+
+.scene-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+}
+
+/* Glass Panels (Realistic) */
+.glass-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 3rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* Hero Elements & 3D Text Animation */
+.sys-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid var(--accent-purple);
+    color: var(--accent-purple);
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    background: rgba(138, 43, 226, 0.1);
+}
+.hero-title { 
+    font-size: 4rem; 
+    margin-bottom: 0.5rem; 
+    text-transform: uppercase;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    animation: float3D 6s ease-in-out infinite;
+    text-shadow: 
+        1px 1px 0 #222,
+        2px 2px 0 #222,
+        3px 3px 0 var(--accent-cyan),
+        4px 4px 10px rgba(0, 240, 255, 0.5);
+}
+
+@keyframes float3D {
+    0% { transform: translateY(0px) rotateX(10deg) rotateY(-5deg); }
+    50% { transform: translateY(-15px) rotateX(-5deg) rotateY(10deg); text-shadow: 1px 1px 0 #222, 2px 2px 0 #222, 3px 3px 0 var(--accent-purple), 4px 4px 20px rgba(138, 43, 226, 0.8); }
+    100% { transform: translateY(0px) rotateX(10deg) rotateY(-5deg); }
+}
+
+.hero-subtitle { font-size: 1.5rem; color: #aaa; font-weight: 300; margin-bottom: 1.5rem; }
+
+/* Buttons & 3D Element */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+}
+
+.primary-btn {
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid var(--accent-cyan);
+    color: var(--accent-cyan);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+.primary-btn:hover {
+    background: var(--accent-cyan);
+    color: var(--bg-dark);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+.3d-btn {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    animation: floatBtn3D 4s ease-in-out infinite;
+}
+
+@keyframes floatBtn3D {
+    0% { transform: translateY(0px) rotateX(5deg); box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3); }
+    50% { transform: translateY(-10px) rotateX(-5deg); box-shadow: 0 15px 25px rgba(0, 240, 255, 0.5), 0 20px 20px rgba(0,0,0,0.5); }
+    100% { transform: translateY(0px) rotateX(5deg); box-shadow: 0 5px 15px rgba(0, 240, 255, 0.3); }
+}
+
+.scroll-indicator {
+    margin-top: 3rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #666;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 10px #fff; } }
+
+/* AI Assistant Widget */
+.ai-widget {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    z-index: 1000;
+    pointer-events: auto;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s;
+}
+.ai-widget.hidden {
+    transform: translateY(150px) scale(0.8);
+    opacity: 0;
+    pointer-events: none;
+}
+.ai-avatar {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-cyan);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    background: #000;
+}
+.ai-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.ai-status-ring {
+    position: absolute;
+    top: -5px; left: -5px; right: -5px; bottom: -5px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    border-top-color: var(--accent-purple);
+    border-bottom-color: var(--accent-purple);
+    animation: spin 3s linear infinite;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.ai-dialogue {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px 12px 0 12px;
+    padding: 15px 20px;
+    max-width: 300px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    position: relative;
+}
+.ai-dialogue::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    right: -10px;
+    border-width: 10px 0 0 10px;
+    border-style: solid;
+    border-color: var(--glass-border) transparent transparent transparent;
+}
+.ai-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+.sys-tag {
+    font-size: 0.6rem;
+    background: rgba(0, 240, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+    color: #fff;
+    margin-left: 5px;
+}
+.ai-text {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #e0e0e0;
+}
+
+/* Terminal UI */
+.terminal-window {
+    background: rgba(5, 5, 8, 0.9);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 700px;
+    border: 1px solid #333;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+    overflow: hidden;
+}
+.terminal-header {
+    background: #1a1a1a;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+.dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+.terminal-header .title {
+    margin-left: 15px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #888;
+}
+.terminal-body {
+    padding: 2rem;
+    font-family: 'Fira Code', monospace;
+    color: var(--terminal-green);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    min-height: 250px;
+}
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 18px;
+    background: var(--terminal-green);
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+/* Holographic Timeline */
+.holographic-timeline {
+    width: 100%;
+    max-width: 800px;
+    border-left: 2px solid rgba(0, 240, 255, 0.3);
+    padding-left: 2rem;
+}
+.holo-card {
+    background: linear-gradient(90deg, rgba(0,240,255,0.05), transparent);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-left: 4px solid var(--accent-cyan);
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+.holo-card:hover { background: linear-gradient(90deg, rgba(0,240,255,0.1), transparent); box-shadow: 0 0 20px rgba(0,240,255,0.1); }
+.holo-card::before {
+    content: '';
+    position: absolute;
+    left: -37px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--bg-dark);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent-cyan);
+}
+.holo-header { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.2rem; }
+.holo-role { color: var(--accent-cyan); font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.holo-date { color: #888; font-size: 0.8rem; margin-bottom: 1rem; }
+.holo-card p { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #ccc; margin-bottom: 0.4rem; }
+
+/* Data Grid & Skill Rings */
+.data-grid {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 800px;
+}
+.skill-ring-container { text-align: center; }
+.progress-ring { transform: rotate(-90deg); margin-bottom: 1rem; }
+.progress-ring__circle { transition: stroke-dashoffset 1.5s ease-in-out; }
+.ring-label { font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; color: #ddd; }
+
+/* Cert Tags */
+.cert-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1rem; justify-content: center; }
+.tag {
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+/* Contact Radar */
+.radar-scan {
+    width: 100px;
+    height: 100px;
+    border: 1px solid var(--accent-purple);
+    border-radius: 50%;
+    margin: 2rem auto;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(138, 43, 226, 0.2);
+}
+.radar-scan::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50px; height: 50px;
+    background: linear-gradient(45deg, rgba(138,43,226,0.8) 0%, transparent 50%);
+    transform-origin: top left;
+    animation: radar 2s linear infinite;
+}
+@keyframes radar { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+.contact-details a { color: var(--accent-cyan); text-decoration: none; }
+.contact-details a:hover { text-shadow: 0 0 8px var(--accent-cyan); }
+
+/* Footer */
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    z-index: 50;
+    pointer-events: auto;
+}
+.site-footer p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: 'Fira Code', monospace;
+}
+.site-footer a {
+    color: var(--accent-purple);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.site-footer a:hover {
+    color: var(--accent-cyan);
+    text-shadow: 0 0 5px var(--accent-cyan);
+}
