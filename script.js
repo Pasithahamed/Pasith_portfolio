@@ -44,12 +44,12 @@ const tunnelGeo = new THREE.BufferGeometry();
 const tunnelCount = isMobile ? 300 : 1000;
 const tunnelPos = new Float32Array(tunnelCount * 3);
 
-for(let i=0; i<tunnelCount*3; i+=3) {
+for (let i = 0; i < tunnelCount * 3; i += 3) {
     const angle = Math.random() * Math.PI * 2;
     const radius = 10 + Math.random() * 10; // Hollow center for camera to fly through
     tunnelPos[i] = Math.cos(angle) * radius;
-    tunnelPos[i+1] = Math.sin(angle) * radius;
-    tunnelPos[i+2] = 20 - Math.random() * 300; // Deep Z-axis scattering
+    tunnelPos[i + 1] = Math.sin(angle) * radius;
+    tunnelPos[i + 2] = 20 - Math.random() * 300; // Deep Z-axis scattering
 }
 tunnelGeo.setAttribute('position', new THREE.BufferAttribute(tunnelPos, 3));
 const tunnelMat = new THREE.PointsMaterial({
@@ -68,10 +68,10 @@ const portals = [];
 const numPortals = 5;
 const portalSpacing = 50; // Distance between portals on Z axis
 
-for(let i = 0; i < numPortals; i++) {
+for (let i = 0; i < numPortals; i++) {
     // We create a glowing square frame using Box geometries
     const frameGroup = new THREE.Group();
-    
+
     const mat = new THREE.MeshStandardMaterial({
         color: i % 2 === 0 ? 0x00f0ff : 0x8a2be2, // Alternate Cyan and Purple
         emissive: i % 2 === 0 ? 0x00f0ff : 0x8a2be2,
@@ -87,19 +87,19 @@ for(let i = 0; i < numPortals; i++) {
     const vertGeo = new THREE.BoxGeometry(thickness, size, thickness);
 
     const top = new THREE.Mesh(horizGeo, mat);
-    top.position.y = size/2;
+    top.position.y = size / 2;
     const bottom = new THREE.Mesh(horizGeo, mat);
-    bottom.position.y = -size/2;
+    bottom.position.y = -size / 2;
     const left = new THREE.Mesh(vertGeo, mat);
-    left.position.x = -size/2;
+    left.position.x = -size / 2;
     const right = new THREE.Mesh(vertGeo, mat);
-    right.position.x = size/2;
+    right.position.x = size / 2;
 
     frameGroup.add(top, bottom, left, right);
-    
+
     // Position the portal
     frameGroup.position.z = - (i * portalSpacing);
-    
+
     // Add point light at the portal
     const pLight = new THREE.PointLight(i % 2 === 0 ? 0x00f0ff : 0x8a2be2, 1, 30);
     frameGroup.add(pLight);
@@ -134,9 +134,9 @@ function animate() {
 
     // Move tunnel particles to simulate continuous speed
     const positions = tunnelMesh.geometry.attributes.position.array;
-    for(let i=2; i<tunnelCount*3; i+=3) {
+    for (let i = 2; i < tunnelCount * 3; i += 3) {
         positions[i] += 0.2;
-        if(positions[i] > camera.position.z + 10) {
+        if (positions[i] > camera.position.z + 10) {
             positions[i] = camera.position.z - 200; // recycle particles deep back
         }
     }
@@ -195,12 +195,12 @@ let lastActiveIndex = -1;
 // Function to update active scene based on camera Z position (run on every animation frame for perfect synchronization)
 function updateActiveScene() {
     const camZ = camera.position.z;
-    
+
     // Determine which portal we are nearest to based on Z
     // Portals are at 0, -50, -100, -150, -200
     // If camZ is between 10 and -25, we are at portal 0 (Hero)
     // If camZ is between -25 and -75, we are at portal 1 (About)
-    
+
     let activeIndex = 0;
     if (camZ <= -25 && camZ > -75) activeIndex = 1;
     else if (camZ <= -75 && camZ > -125) activeIndex = 2;
@@ -230,20 +230,20 @@ let audioCtx;
 function playTypingSound() {
     if (!audioCtx) audioCtx = new AudioContext();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    
+
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
-    
+
     oscillator.type = 'square';
     // Randomize frequency slightly for a "computing" sound
     oscillator.frequency.setValueAtTime(400 + Math.random() * 200, audioCtx.currentTime);
-    
+
     gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime); // Very low volume
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
-    
+
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.05);
 }
@@ -274,7 +274,7 @@ function triggerSceneSpecificLogic(index) {
                 if (terminalText.charAt(i).trim() !== '') {
                     playTypingSound();
                 }
-                
+
                 terminalBody.innerHTML += terminalText.charAt(i) === '\n' ? '<br>' : terminalText.charAt(i);
                 i++;
                 setTimeout(typeWriter, 15);
@@ -284,7 +284,7 @@ function triggerSceneSpecificLogic(index) {
         }
         typeWriter();
     }
-    
+
     // Scene 4: Skill Rings
     if (index === 3) {
         const circles = document.querySelectorAll('.progress');
@@ -294,8 +294,8 @@ function triggerSceneSpecificLogic(index) {
             circle.style.strokeDasharray = `${circumference} ${circumference}`;
             const percent = circle.getAttribute('data-percent');
             const offset = circumference - (percent / 100) * circumference;
-            
-            if(!circle.style.strokeDashoffset || circle.style.strokeDashoffset == "") {
+
+            if (!circle.style.strokeDashoffset || circle.style.strokeDashoffset == "") {
                 circle.style.strokeDashoffset = circumference;
                 setTimeout(() => {
                     circle.style.strokeDashoffset = offset;
@@ -332,7 +332,7 @@ window.speechSynthesis.onvoiceschanged = () => {
 
 function typeAI(text, callback, delay = 2000) {
     aiSpeech.innerHTML = '';
-    
+
     // Speak the text
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel(); // Stop any current speech
@@ -345,11 +345,11 @@ function typeAI(text, callback, delay = 2000) {
 
     let i = 0;
     function type() {
-        if(i < text.length) {
+        if (i < text.length) {
             aiSpeech.innerHTML += text.charAt(i);
             i++;
             setTimeout(type, 30);
-        } else if(callback) {
+        } else if (callback) {
             setTimeout(callback, delay);
         }
     }
@@ -357,19 +357,19 @@ function typeAI(text, callback, delay = 2000) {
 }
 
 document.getElementById('start-tour-btn').addEventListener('click', () => {
-    if(tourActive) return;
+    if (tourActive) return;
     tourActive = true;
-    
+
     // Show AI Widget
     aiWidget.classList.remove('hidden');
-    
+
     // Start Tour Sequence
     document.getElementById('start-tour-btn').style.display = 'none';
-    
+
     // Scroll Proxy for auto-scrolling
     const scrollProxy = { y: window.scrollY };
     const maxScroll = document.body.scrollHeight - window.innerHeight;
-    
+
     // Calculate target scroll positions for each portal
     // We have 5 portals. maxTravel is 210. 
     // Target ratios: 0, 50/210, 100/210, 150/210, 200/210
@@ -382,19 +382,19 @@ document.getElementById('start-tour-btn').addEventListener('click', () => {
     ];
 
     function goToNextStop() {
-        if(currentTourIndex >= stops.length) {
+        if (currentTourIndex >= stops.length) {
             typeAI("You have full control now. Navigate freely.");
             tourActive = false;
             return;
         }
-        
+
         // Only add 7s delay for Experience (index 2) and Skills (index 3). Others use 2s.
         const readDelay = (currentTourIndex === 2 || currentTourIndex === 3) ? 7000 : 2000;
-        
+
         // Speak dialogue for current stop
         typeAI(aiDialogues[currentTourIndex], () => {
             currentTourIndex++;
-            if(currentTourIndex < stops.length) {
+            if (currentTourIndex < stops.length) {
                 // Move to next stop
                 gsap.to(scrollProxy, {
                     y: stops[currentTourIndex],
